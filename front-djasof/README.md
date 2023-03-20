@@ -7,4 +7,6 @@ npm install vue-router@4
 # Install Firebase
 npm install firebase
 
+# Install AntDesign 
+npm install ant-design-vue@next --save
 

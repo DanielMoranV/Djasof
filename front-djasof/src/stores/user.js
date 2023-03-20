@@ -26,6 +26,7 @@ export const useUserStore = defineStore("userStore", {
                 router.push("/login");
             } catch (error) {
                 console.log(error);
+                return error.code;
             } finally {
                 this.loadingUser = false;
             }
@@ -42,6 +43,7 @@ export const useUserStore = defineStore("userStore", {
                 router.push("/dashboard");
             } catch (error) {
                 console.log(error);
+                return error.code;
             } finally {
                 this.loadingUser = false;
             }
