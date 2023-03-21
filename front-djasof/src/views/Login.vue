@@ -58,6 +58,13 @@
                         >Ingresar</a-button
                     >
                 </a-form-item>
+                <a-form-item>
+                    <a-button
+                        type="primary"
+                        html-type="button"
+                        ><router-link to="/register">Register</router-link></a-button
+                    >
+                </a-form-item>
             </a-form>
         </a-col>
     </a-row>
@@ -77,26 +84,26 @@ const formState = reactive({
 });
 
 const onFinish = async (values) => {
-    console.log("Success:", values);
+    //console.log("Success:", values);
     const error = await userStore.loginUser(
         formState.email,
         formState.password
     );
-
+    console.log("lee esto:",error)
     if (!error) {
-        return message.success("Bienvenidos a la super apps 💋");
+        return message.success("Bienvenidos a la super apps");
     }
 
     switch (error) {
         case "auth/user-not-found":
-            message.error("No existe el correo registrado 💋");
+            message.error("No existe el correo registrado");
             break;
         case "auth/wrong-password":
-            message.error("Error de contraseña 💋");
+            message.error("Error de contraseña");
             break;
         default:
             message.error(
-                "Ocurrió un error en el servidor 💋 intentelo más tarde..."
+                "Ocurrió un error en el servidor intentelo más tarde..."
             );
             break;
     }
