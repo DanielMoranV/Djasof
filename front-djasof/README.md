@@ -4,6 +4,9 @@ npm create vite@latest front-djasof -- --template vue
 # Install Vue Router
 npm install vue-router@4
 
+# Install Pinia
+npm install pinia
+
 # Install Firebase
 npm install firebase
 
