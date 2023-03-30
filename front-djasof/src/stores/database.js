@@ -1,11 +1,11 @@
 import {
-    addDoc,
     collection,
     deleteDoc,
     doc,
     getDoc,
     getDocs,
     query,
+    setDoc,
     updateDoc,
     where,
 } from "firebase/firestore/lite";
@@ -19,8 +19,25 @@ export const useDatabaseStore = defineStore("database", {
     state: () => ({
         documents: [],
         loadingDoc: false,
+        loading: false,
     }),
     actions: {
+        async getURL(id) {
+            try {
+                const docRef = doc(db, "urls", id);
+                const docSpan = await getDoc(docRef);
+
+                if (!docSpan.exists()) {
+                    return false;
+                }
+
+                return docSpan.data().name;
+            } catch (error) {
+                console.log(error.message);
+                return false;
+            } finally {
+            }
+        },
         async getUrls() {
             if (this.documents.length !== 0) {
                 return;
@@ -47,22 +64,24 @@ export const useDatabaseStore = defineStore("database", {
             }
         },
         async addUrl(name) {
+            this.loading = true;
             try {
                 const objetoDoc = {
                     name: name,
                     short: nanoid(6),
                     user: auth.currentUser.uid,
                 };
-                const docRef = await addDoc(collection(db, "urls"), objetoDoc);
+                await setDoc(doc(db, "urls", objetoDoc.short), objetoDoc);
                 // console.log(docRef.id);
                 this.documents.push({
                     ...objetoDoc,
-                    id: docRef.id,
+                    id: objetoDoc.short,
                 });
             } catch (error) {
-                console.log(error);
+                console.log(error.code);
+                return error.code;
             } finally {
-                console.log('Holi')
+                this.loading = false;
             }
         },
         async leerUrl(id) {
@@ -85,6 +104,7 @@ export const useDatabaseStore = defineStore("database", {
             }
         },
         async updateUrl(id, name) {
+            this.loading = true;
             try {
                 const docRef = doc(db, "urls", id);
 
@@ -104,21 +124,25 @@ export const useDatabaseStore = defineStore("database", {
                 this.documents = this.documents.map((item) =>
                     item.id === id ? { ...item, name: name } : item
                 );
-                router.push("/dashboard");
+                router.push("/");
             } catch (error) {
                 console.log(error.message);
+                return error.message;
+            } finally {
+                this.loading = false;
             }
         },
         async deleteUrl(id) {
+            this.loading = true;
             try {
                 const docRef = doc(db, "urls", id);
 
-                const docSnap = await getDoc(docRef);
-                if (!docSnap.exists()) {
+                const docSpan = await getDoc(docRef);
+                if (!docSpan.exists()) {
                     throw new Error("no existe el doc");
                 }
 
-                if (docSnap.data().user !== auth.currentUser.uid) {
+                if (docSpan.data().user !== auth.currentUser.uid) {
                     throw new Error("no le pertenece ese documento");
                 }
 
@@ -127,8 +151,10 @@ export const useDatabaseStore = defineStore("database", {
                     (item) => item.id !== id
                 );
             } catch (error) {
-                console.log(error.message);
+                // console.log(error.code);
+                return error.message;
             } finally {
+                this.loading = false;
             }
         },
     },

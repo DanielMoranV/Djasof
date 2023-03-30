@@ -10,6 +10,9 @@
               <a-menu-item v-if="userStore.userData" key="dashboard">
                   <router-link to="/dashboard">Dashboard</router-link>
               </a-menu-item>
+              <a-menu-item v-if="userStore.userData" key="perfil">
+                    <router-link to="/perfil">Perfil</router-link>
+                </a-menu-item>
               <a-menu-item v-if="!userStore.userData" key="home">
                   <router-link to="/">Home</router-link>
               </a-menu-item>
